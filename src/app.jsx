@@ -1,29 +1,41 @@
 var React = require('react');
 
-var reactText = "Render a ReactElement to its initial HTML. This should only be used on the server. React will return an HTML string. You can use this method to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.  If you call React.render() on a node that already has this server-rendered markup, React will preserve it and only attach event handlers, allowing you to have a very performant first-load experience.";
+var excerpt = "All your base are belong to us.";
 
 var TextDisplay = React.createClass({
   render: function() {
-    var completedStyle = { color: 'green' };
+    var currentStyle = {
+      color: this.props.error ? 'red' : 'green',
+      textDecoration: 'underline'
+    };
+    var lastWord = false;
+    var wordStart = this.props.index;
+    if (excerpt.slice(wordStart).indexOf(' ') === -1) {
+      lastWord = true;
+    }
+    var wordEnd =  wordStart + excerpt.slice(wordStart).indexOf(' ');
+    var completedText = excerpt.slice(0, wordStart);
+    var currentText = lastWord ? excerpt.slice(wordStart) : excerpt.slice(wordStart, wordEnd);
+    var remainingText = excerpt.slice(wordEnd);
     return (
-      <div className="typerReader">
-        <span className="complete" style={completedStyle}>
-          {reactText.slice(0, this.props.index)}
+      <div className="textDisplay">
+        {completedText}
+        <span style={currentStyle}>
+          {currentText}
         </span>
-          {reactText.slice(this.props.index)}
+        { lastWord ? '' : remainingText}
       </div>
     );
   }
 });
 
-var Input = React.createClass({
+var TextInput = React.createClass({
   handleChange: function(e) {
-    var inputVal = e.target.value;
-    this.props.onInputChange(inputVal);
+    this.props.onInputChange(e);
   },
   render: function() {
     return (
-      <div className="typerInput">
+      <div className="textInput">
         <input type="text" onChange={this.handleChange} placeholder="Start typing" />
       </div>
     );
@@ -32,34 +44,34 @@ var Input = React.createClass({
 
 var App = React.createClass({
   getInitialState: function() {
-    // var line = this.getChunk(reactText, 0);
     return {
-      charIndex: 0
-      // lineIndex: 0
+      index: 0,
+      error: false
     };
   },
-  // getChunk: function(text, index, spread) {
-  //   var spread = spread || 7;
-  //   return text.split(' ').splice(index * spread, spread).join(' ');
-  // },
-  handleInputChange: function(inputVal) {
-    console.log(inputVal);
-    if (reactText.indexOf(inputVal) === 0) {
-      // this.setState(function(previousState, currentProps) {
-        // console.log('new index: ', previousState.charIndex + 1);
-        // return {charIndex: previousState.charIndex + 1};
-      // });
-      this.setState({
-        charIndex: inputVal.length
-      });
+  handleInputChange: function(e) {
+    var inputVal = e.target.value;
+    var index = this.state.index;
+    // console.log(excerpt.slice(index, index + inputVal.length), ' ', inputVal);
+    if (excerpt.slice(index, index + inputVal.length) === inputVal) {
+      if (inputVal.slice(-1) === " " && !this.state.error) {
+        e.target.value = '';
+        this.setState(function(prevState) {
+          return { index: prevState.index + inputVal.length };
+        });
+        return;
+      }
+      this.setState({ error: false });
+    } else {
+      this.setState({ error: true });
     }
   },
   render: function() {
     return (
       <div className="container">
         <h1>react-typer</h1>
-        <TextDisplay index={this.state.charIndex} />
-        <Input onInputChange={this.handleInputChange} />
+        <TextDisplay index={this.state.index} error={this.state.error} />
+        <TextInput onInputChange={this.handleInputChange} error={this.state.error} />
       </div>
     );
   }

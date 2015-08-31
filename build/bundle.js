@@ -53,30 +53,42 @@
 
 	var React = __webpack_require__(2);
 
-	var reactText = "Render a ReactElement to its initial HTML. This should only be used on the server. React will return an HTML string. You can use this method to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.  If you call React.render() on a node that already has this server-rendered markup, React will preserve it and only attach event handlers, allowing you to have a very performant first-load experience.";
+	var excerpt = "All your base are belong to us.";
 
 	var TextDisplay = React.createClass({displayName: "TextDisplay",
 	  render: function() {
-	    var completedStyle = { color: 'green' };
+	    var currentStyle = {
+	      color: this.props.error ? 'red' : 'green',
+	      textDecoration: 'underline'
+	    };
+	    var lastWord = false;
+	    var wordStart = this.props.index;
+	    if (excerpt.slice(wordStart).indexOf(' ') === -1) {
+	      lastWord = true;
+	    }
+	    var wordEnd =  wordStart + excerpt.slice(wordStart).indexOf(' ');
+	    var completedText = excerpt.slice(0, wordStart);
+	    var currentText = lastWord ? excerpt.slice(wordStart) : excerpt.slice(wordStart, wordEnd);
+	    var remainingText = excerpt.slice(wordEnd);
 	    return (
-	      React.createElement("div", {className: "typerReader"}, 
-	        React.createElement("span", {className: "complete", style: completedStyle}, 
-	          reactText.slice(0, this.props.index)
+	      React.createElement("div", {className: "textDisplay"}, 
+	        completedText, 
+	        React.createElement("span", {style: currentStyle}, 
+	          currentText
 	        ), 
-	          reactText.slice(this.props.index)
+	         lastWord ? '' : remainingText
 	      )
 	    );
 	  }
 	});
 
-	var Input = React.createClass({displayName: "Input",
+	var TextInput = React.createClass({displayName: "TextInput",
 	  handleChange: function(e) {
-	    var inputVal = e.target.value;
-	    this.props.onInputChange(inputVal);
+	    this.props.onInputChange(e);
 	  },
 	  render: function() {
 	    return (
-	      React.createElement("div", {className: "typerInput"}, 
+	      React.createElement("div", {className: "textInput"}, 
 	        React.createElement("input", {type: "text", onChange: this.handleChange, placeholder: "Start typing"})
 	      )
 	    );
@@ -85,34 +97,34 @@
 
 	var App = React.createClass({displayName: "App",
 	  getInitialState: function() {
-	    // var line = this.getChunk(reactText, 0);
 	    return {
-	      charIndex: 0
-	      // lineIndex: 0
+	      index: 0,
+	      error: false
 	    };
 	  },
-	  // getChunk: function(text, index, spread) {
-	  //   var spread = spread || 7;
-	  //   return text.split(' ').splice(index * spread, spread).join(' ');
-	  // },
-	  handleInputChange: function(inputVal) {
-	    console.log(inputVal);
-	    if (reactText.indexOf(inputVal) === 0) {
-	      // this.setState(function(previousState, currentProps) {
-	        // console.log('new index: ', previousState.charIndex + 1);
-	        // return {charIndex: previousState.charIndex + 1};
-	      // });
-	      this.setState({
-	        charIndex: inputVal.length
-	      });
+	  handleInputChange: function(e) {
+	    var inputVal = e.target.value;
+	    var index = this.state.index;
+	    // console.log(excerpt.slice(index, index + inputVal.length), ' ', inputVal);
+	    if (excerpt.slice(index, index + inputVal.length) === inputVal) {
+	      if (inputVal.slice(-1) === " " && !this.state.error) {
+	        e.target.value = '';
+	        this.setState(function(prevState) {
+	          return { index: prevState.index + inputVal.length };
+	        });
+	        return;
+	      }
+	      this.setState({ error: false });
+	    } else {
+	      this.setState({ error: true });
 	    }
 	  },
 	  render: function() {
 	    return (
 	      React.createElement("div", {className: "container"}, 
 	        React.createElement("h1", null, "react-typer"), 
-	        React.createElement(TextDisplay, {index: this.state.charIndex}), 
-	        React.createElement(Input, {onInputChange: this.handleInputChange})
+	        React.createElement(TextDisplay, {index: this.state.index, error: this.state.error}), 
+	        React.createElement(TextInput, {onInputChange: this.handleInputChange, error: this.state.error})
 	      )
 	    );
 	  }
