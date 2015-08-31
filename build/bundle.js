@@ -55,26 +55,29 @@
 
 	var reactText = "Render a ReactElement to its initial HTML. This should only be used on the server. React will return an HTML string. You can use this method to generate HTML on the server and send the markup down on the initial request for faster page loads and to allow search engines to crawl your pages for SEO purposes.  If you call React.render() on a node that already has this server-rendered markup, React will preserve it and only attach event handlers, allowing you to have a very performant first-load experience.";
 
-	var Reader = React.createClass({displayName: "Reader",
+	var TextDisplay = React.createClass({displayName: "TextDisplay",
 	  render: function() {
+	    var completedStyle = { color: 'green' };
 	    return (
 	      React.createElement("div", {className: "typerReader"}, 
-	        this.props.line
+	        React.createElement("span", {className: "complete", style: completedStyle}, 
+	          reactText.slice(0, this.props.index)
+	        ), 
+	          reactText.slice(this.props.index)
 	      )
 	    );
 	  }
 	});
 
 	var Input = React.createClass({displayName: "Input",
-	  handleKeyUp: function(event) {
-	    event.preventDefault();
-	    debugger;
-	    this.props.onInputChange(event.target);
+	  handleChange: function(e) {
+	    var inputVal = e.target.value;
+	    this.props.onInputChange(inputVal);
 	  },
 	  render: function() {
 	    return (
 	      React.createElement("div", {className: "typerInput"}, 
-	        React.createElement("input", {type: "text", onKeyUp: this.handleKeyUp, placeholder: "type here"})
+	        React.createElement("input", {type: "text", onChange: this.handleChange, placeholder: "Start typing"})
 	      )
 	    );
 	  }
@@ -82,20 +85,33 @@
 
 	var App = React.createClass({displayName: "App",
 	  getInitialState: function() {
-	    var line = this.getChunk(reactText, 0);
-	    return {index: 0, line: line};
+	    // var line = this.getChunk(reactText, 0);
+	    return {
+	      charIndex: 0
+	      // lineIndex: 0
+	    };
 	  },
-	  getChunk: function(text, index, spread) {
-	    var spread = spread || 7;
-	    return text.split(' ').splice(index * spread, spread).join(' ');
-	  },
-	  handleInputChange: function() {
+	  // getChunk: function(text, index, spread) {
+	  //   var spread = spread || 7;
+	  //   return text.split(' ').splice(index * spread, spread).join(' ');
+	  // },
+	  handleInputChange: function(inputVal) {
+	    console.log(inputVal);
+	    if (reactText.indexOf(inputVal) === 0) {
+	      // this.setState(function(previousState, currentProps) {
+	        // console.log('new index: ', previousState.charIndex + 1);
+	        // return {charIndex: previousState.charIndex + 1};
+	      // });
+	      this.setState({
+	        charIndex: inputVal.length
+	      });
+	    }
 	  },
 	  render: function() {
 	    return (
 	      React.createElement("div", {className: "container"}, 
 	        React.createElement("h1", null, "react-typer"), 
-	        React.createElement(Reader, {line: this.state.line}), 
+	        React.createElement(TextDisplay, {index: this.state.charIndex}), 
 	        React.createElement(Input, {onInputChange: this.handleInputChange})
 	      )
 	    );
