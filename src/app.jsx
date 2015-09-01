@@ -1,42 +1,46 @@
 var React = require('react');
 require('./sass/app.scss');
 
-
 var excerpt = "All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. ";
 
 var TextDisplay = React.createClass({
+  getCompletedText: function() {
+    if (this.props.lineView) {
+      return '';
+    }
+    return this.props.children.slice(0, this.props.index);
+  },
+  getCurrentText: function() {
+    var idx = this.props.index;
+    var text = this.props.children;
+    if (text.slice(idx).indexOf(' ') === -1) {
+      return text.slice(idx);
+    }
+    return text.slice(idx, idx + text.slice(idx).indexOf(' '));
+  },
+  getRemainingText: function() {
+    var idx = this.props.index;
+    var text = this.props.children;
+    if (text.slice(idx).indexOf(' ') === -1) {
+      return '';
+    }
+    var wordEnd = idx + text.slice(idx).indexOf(' ');
+    if (this.props.lineView) {
+      return text.slice(wordEnd).split(' ').slice(0, 7).join(' ');
+    }
+    return text.slice(wordEnd);
+  },
   render: function() {
     var currentStyle = {
       color: this.props.error ? 'red' : 'green'
     };
-    var lastWord = false;
-    var wordStart = this.props.index;
-    if (excerpt.slice(wordStart).indexOf(' ') === -1) {
-      lastWord = true;
-    }
-    var wordEnd =  wordStart + excerpt.slice(wordStart).indexOf(' ');
-    var completedText = excerpt.slice(0, wordStart);
-    var currentText = lastWord ? excerpt.slice(wordStart) : excerpt.slice(wordStart, wordEnd);
-    var remainingText = excerpt.slice(wordEnd);
-    console.log(this.props.lineView);
-    if (this.props.lineView) {
-      remainingText = remainingText.split(' ').slice(0, 7).join(' ');
-      return (
-        <div className="textDisplay">
-          <span style={currentStyle}>
-            {currentText}
-          </span>
-          { lastWord ? '' : remainingText}
-        </div>
-      );
-    }
     return (
       <div className="textDisplay">
-        {completedText}
+        {this.getCompletedText()}
         <span style={currentStyle}>
-          {currentText}
+          {this.getCurrentText()}
         </span>
-        { lastWord ? '' : remainingText}
+        {this.getRemainingText()}
       </div>
     );
   }
@@ -66,8 +70,7 @@ var App = React.createClass({
   handleInputChange: function(e) {
     var inputVal = e.target.value;
     var index = this.state.index;
-    // console.log(excerpt.slice(index, index + inputVal.length), ' ', inputVal);
-    if (excerpt.slice(index, index + inputVal.length) === inputVal) {
+    if (this.props.excerpt.slice(index, index + inputVal.length) === inputVal) {
       if (inputVal.slice(-1) === " " && !this.state.error) {
         e.target.value = '';
         this.setState(function(prevState) {
@@ -80,7 +83,7 @@ var App = React.createClass({
       this.setState({ error: true });
     }
   },
-  changeView: function(e) {
+  handleClick: function(e) {
     if (this.state.lineView) {
       React.findDOMNode(this.refs.viewType).text = "line view";
     } else {
@@ -94,12 +97,24 @@ var App = React.createClass({
     return (
       <div className="container">
         <h1>react-typer</h1>
-        <a href="javascript:;" onClick={this.changeView} ref="viewType">line view</a>
-        <TextDisplay index={this.state.index} error={this.state.error} lineView={this.state.lineView} />
-        <TextInput onInputChange={this.handleInputChange} error={this.state.error} />
+        <a
+          href="javascript:;"
+          onClick={this.handleClick}
+          ref="viewType">
+          line view
+        </a>
+        <TextDisplay
+          index={this.state.index}
+          error={this.state.error}
+          lineView={this.state.lineView}>
+          {this.props.excerpt}
+        </TextDisplay>
+        <TextInput
+          onInputChange={this.handleInputChange}
+          error={this.state.error} />
       </div>
     );
   }
 });
 
-React.render(<App />, document.getElementById('app'));
+React.render(<App excerpt={excerpt} />, document.getElementById('app'));
