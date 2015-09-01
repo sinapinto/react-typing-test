@@ -1,12 +1,13 @@
 var React = require('react');
+require('./sass/app.scss');
 
-var excerpt = "All your base are belong to us.";
+
+var excerpt = "All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. ";
 
 var TextDisplay = React.createClass({
   render: function() {
     var currentStyle = {
-      color: this.props.error ? 'red' : 'green',
-      textDecoration: 'underline'
+      color: this.props.error ? 'red' : 'green'
     };
     var lastWord = false;
     var wordStart = this.props.index;
@@ -17,6 +18,18 @@ var TextDisplay = React.createClass({
     var completedText = excerpt.slice(0, wordStart);
     var currentText = lastWord ? excerpt.slice(wordStart) : excerpt.slice(wordStart, wordEnd);
     var remainingText = excerpt.slice(wordEnd);
+    console.log(this.props.lineView);
+    if (this.props.lineView) {
+      remainingText = remainingText.split(' ').slice(0, 7).join(' ');
+      return (
+        <div className="textDisplay">
+          <span style={currentStyle}>
+            {currentText}
+          </span>
+          { lastWord ? '' : remainingText}
+        </div>
+      );
+    }
     return (
       <div className="textDisplay">
         {completedText}
@@ -46,7 +59,8 @@ var App = React.createClass({
   getInitialState: function() {
     return {
       index: 0,
-      error: false
+      error: false,
+      lineView: false
     };
   },
   handleInputChange: function(e) {
@@ -66,11 +80,22 @@ var App = React.createClass({
       this.setState({ error: true });
     }
   },
+  changeView: function(e) {
+    if (this.state.lineView) {
+      React.findDOMNode(this.refs.viewType).text = "line view";
+    } else {
+      React.findDOMNode(this.refs.viewType).text = "paragraph view";
+    }
+    this.setState(function(prevState) {
+      return { lineView: !prevState.lineView };
+    });
+  },
   render: function() {
     return (
       <div className="container">
         <h1>react-typer</h1>
-        <TextDisplay index={this.state.index} error={this.state.error} />
+        <a href="javascript:;" onClick={this.changeView} ref="viewType">line view</a>
+        <TextDisplay index={this.state.index} error={this.state.error} lineView={this.state.lineView} />
         <TextInput onInputChange={this.handleInputChange} error={this.state.error} />
       </div>
     );
