@@ -1,6 +1,76 @@
 @import 'variables';
 
 body {
+  text-align: center;
+  margin: 20px;
   font: 100% $font-stack;
-  color: $primary-color;
+  color: $foreground;
+  background-color: $background;
 }
+
+a {
+  color: $blue;
+  text-decoration: none;
+}
+
+input:focus,
+a:focus,
+button:focus {
+  outline: none;
+  text-decoration: none;
+}
+
+.container {
+  h1 {
+    font-weight: 700;
+    font-size: 36px;
+  }
+}
+
+.textInput {
+  padding: 30px;
+
+  input {
+    border: none;
+    border-bottom: 1px solid $foreground;
+    color: $foreground;
+    background-color: $background;
+    font-size: 30px;
+  }
+
+}
+
+.textDisplay {
+  padding: 10px;
+  font-size: 22px;
+
+  .success {
+    color: $green;
+  }
+
+  .error {
+    color: $red;
+  }
+}
+.textDisplay.lg {
+  font-size: 30px;
+}
+
+@mixin input-placeholder($color) {
+  ::-webkit-input-placeholder {
+    color: $color;
+  }
+  :-moz-placeholder {
+    color: $color;
+    opacity:  1;
+  }
+  ::-moz-placeholder {
+    color: $color;
+    opacity:  1;
+  }
+  :-ms-input-placeholder {
+    color: $color;
+  }
+}
+
+@include input-placeholder(darken($darkGrey, 20%));

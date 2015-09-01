@@ -77,13 +77,10 @@
 	    return text.slice(wordEnd);
 	  },
 	  render: function() {
-	    var currentStyle = {
-	      color: this.props.error ? 'red' : 'green'
-	    };
 	    return (
-	      React.createElement("div", {className: "textDisplay"}, 
+	      React.createElement("div", {className: this.props.lineView ? "textDisplay lg" : "textDisplay"}, 
 	        this.getCompletedText(), 
-	        React.createElement("span", {style: currentStyle}, 
+	        React.createElement("span", {className: this.props.error ? "error" : "success"}, 
 	          this.getCurrentText()
 	        ), 
 	        this.getRemainingText()
@@ -20576,7 +20573,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  font: 100% Helvetica, sans-serif;\n  color: #333; }\n", ""]);
+	exports.push([module.id, "body {\n  text-align: center;\n  margin: 20px;\n  font: 100% \"Source Sans Pro\", sans-serif;\n  color: #ebdbb2;\n  background-color: #282828; }\n\na {\n  color: #83a598; }\n\ninput:focus,\na:focus,\nbutton:focus {\n  outline: none;\n  text-decoration: none; }\n\n.container h1 {\n  font-weight: 700; }\n\n.textInput {\n  padding: 30px; }\n  .textInput input {\n    border: none;\n    border-bottom: 1px solid #ebdbb2;\n    color: #ebdbb2;\n    background-color: #282828;\n    font-size: 30px; }\n\n.textDisplay {\n  padding: 10px;\n  font-size: 22px; }\n  .textDisplay .lg {\n    font-size: 30px; }\n  .textDisplay .success {\n    color: #b8bb26; }\n  .textDisplay .error {\n    color: #fb4934; }\n", ""]);
 
 	// exports
 

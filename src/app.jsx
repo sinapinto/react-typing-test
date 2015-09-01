@@ -26,18 +26,15 @@ var TextDisplay = React.createClass({
     }
     var wordEnd = idx + text.slice(idx).indexOf(' ');
     if (this.props.lineView) {
-      return text.slice(wordEnd).split(' ').slice(0, 7).join(' ');
+      return text.slice(wordEnd).split(' ').slice(0, 10).join(' ');
     }
     return text.slice(wordEnd);
   },
   render: function() {
-    var currentStyle = {
-      color: this.props.error ? 'red' : 'green'
-    };
     return (
-      <div className="textDisplay">
+      <div className={this.props.lineView ? "textDisplay lg" : "textDisplay"}>
         {this.getCompletedText()}
-        <span style={currentStyle}>
+        <span className={this.props.error ? "error" : "success"}>
           {this.getCurrentText()}
         </span>
         {this.getRemainingText()}

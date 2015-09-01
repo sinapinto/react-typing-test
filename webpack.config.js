@@ -1,9 +1,9 @@
 var path = require('path');
 
 module.exports = {
-  entry: './src/app.jsx',
+  entry: ['webpack/hot/dev-server', './src/app.jsx'],
   output: {
-    path: './build',
+    path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
   },
   module: {
