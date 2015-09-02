@@ -1,7 +1,7 @@
 var React = require('react');
 require('./sass/app.scss');
 
-var excerpt = "All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. All your base are belong to us. ";
+var excerpt = "All your base are belong to us.";
 
 var TextDisplay = React.createClass({
   getCompletedText: function() {
@@ -43,25 +43,73 @@ var TextDisplay = React.createClass({
   }
 });
 
+var Clock = React.createClass({
+  render: function() {
+    var elapsed = Math.round(this.props.elapsed  / 100);
+    var timer = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
+    return (
+      <div className="timer">
+        {timer}
+      </div>
+    );
+  },
+});
+
 var TextInput = React.createClass({
+  componentDidMount: function() {
+    React.findDOMNode(this.refs.textInput).addEventListener('keydown', this.handleKeyDown);
+  },
+  handleKeyDown: function() {
+    React.findDOMNode(this.refs.textInput).removeEventListener('keydown', this.handleKeyDown);
+    this.props.setupTimer();
+  },
   handleChange: function(e) {
     this.props.onInputChange(e);
   },
   render: function() {
     return (
       <div className="textInput">
-        <input type="text" onChange={this.handleChange} placeholder="Start typing" />
+        <input
+          type="text"
+          ref="textInput"
+          onChange={this.handleChange} />
+      </div>
+    );
+  }
+});
+
+var Recap = React.createClass({
+  render: function() {
+    if (!this.props.completed) {
+      return null;
+    }
+    return (
+      <div className="recapOverlay">
+        <h2>Congrats!</h2>
+        <button
+          className="tryAgain"
+          onClick={this.props.onRestart}>
+          Try again
+        </button>
       </div>
     );
   }
 });
 
 var App = React.createClass({
+  componentWillMount: function() {
+    this.intervals = [];
+  },
+  setInterval: function() {
+    this.intervals.push(setInterval.apply(null, arguments));
+  },
   getInitialState: function() {
     return {
       index: 0,
       error: false,
-      lineView: false
+      lineView: false,
+      timeElapsed: 0,
+      completed: false
     };
   },
   handleInputChange: function(e) {
@@ -69,13 +117,18 @@ var App = React.createClass({
     var index = this.state.index;
     if (this.props.excerpt.slice(index, index + inputVal.length) === inputVal) {
       if (inputVal.slice(-1) === " " && !this.state.error) {
+        // handle a space after a correct word
         e.target.value = '';
-        this.setState(function(prevState) {
-          return { index: prevState.index + inputVal.length };
-        });
-        return;
+        this.setState({ index: this.state.index + inputVal.length });
       }
-      this.setState({ error: false });
+      else if (index + inputVal.length == excerpt.length) {
+        // successfully completed
+        this.setState({ completed: true });
+        this.intervals.map(clearInterval);
+      }
+      else {
+        this.setState({ error: false });
+      }
     } else {
       this.setState({ error: true });
     }
@@ -86,8 +139,19 @@ var App = React.createClass({
     } else {
       React.findDOMNode(this.refs.viewType).text = "paragraph view";
     }
-    this.setState(function(prevState) {
-      return { lineView: !prevState.lineView };
+    this.setState({ lineView: !this.state.lineView });
+  },
+  restart: function() {
+  },
+  setupTimer: function() {
+    this.setState({
+      start: new Date().getTime()
+    }, function() {
+      this.setInterval(function() {
+        this.setState({
+          timeElapsed: new Date().getTime() - this.state.start
+        });
+      }.bind(this), 50)
     });
   },
   render: function() {
@@ -108,7 +172,12 @@ var App = React.createClass({
         </TextDisplay>
         <TextInput
           onInputChange={this.handleInputChange}
+          setupTimer={this.setupTimer}
           error={this.state.error} />
+        <Clock elapsed={this.state.timeElapsed} />
+        <Recap
+          onRestart={this.restart}
+          completed={this.state.completed} />
       </div>
     );
   }
