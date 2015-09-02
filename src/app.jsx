@@ -56,14 +56,10 @@ var Clock = React.createClass({
 });
 
 var TextInput = React.createClass({
-  componentDidMount: function() {
-    React.findDOMNode(this.refs.textInput).addEventListener('keydown', this.handleKeyDown);
-  },
-  handleKeyDown: function() {
-    React.findDOMNode(this.refs.textInput).removeEventListener('keydown', this.handleKeyDown);
-    this.props.setupTimer();
-  },
   handleChange: function(e) {
+    if (!this.props.started) {
+      this.props.setupTimer();
+    }
     this.props.onInputChange(e);
   },
   render: function() {
@@ -71,7 +67,9 @@ var TextInput = React.createClass({
       <div className="textInput">
         <input
           type="text"
+          className={this.props.error ? 'error' : ''}
           ref="textInput"
+          value={this.props.value}
           onChange={this.handleChange} />
       </div>
     );
@@ -86,14 +84,23 @@ var Recap = React.createClass({
     return (
       <div className="recapOverlay">
         <h2>Congrats!</h2>
-        <button
-          className="tryAgain"
-          onClick={this.props.onRestart}>
-          Try again
-        </button>
       </div>
     );
   }
+});
+
+var ScoreBoard = React.createClass({
+  render: function() {
+    return (
+      <div className="scoreBoard">
+        <button
+          className="tryAgain"
+          onClick={this.props.onRestart}>
+          Reset
+        </button>
+      </div>
+    );
+  },
 });
 
 var App = React.createClass({
@@ -109,7 +116,9 @@ var App = React.createClass({
       error: false,
       lineView: false,
       timeElapsed: 0,
-      completed: false
+      completed: false,
+      value: '',
+      started: false
     };
   },
   handleInputChange: function(e) {
@@ -118,19 +127,30 @@ var App = React.createClass({
     if (this.props.excerpt.slice(index, index + inputVal.length) === inputVal) {
       if (inputVal.slice(-1) === " " && !this.state.error) {
         // handle a space after a correct word
-        e.target.value = '';
-        this.setState({ index: this.state.index + inputVal.length });
+        this.setState({
+          index: this.state.index + inputVal.length,
+          value: ''
+        });
       }
       else if (index + inputVal.length == excerpt.length) {
         // successfully completed
-        this.setState({ completed: true });
+        this.setState({
+          completed: true,
+          value: ''
+        });
         this.intervals.map(clearInterval);
       }
       else {
-        this.setState({ error: false });
+        this.setState({
+          error: false,
+          value: inputVal
+        });
       }
     } else {
-      this.setState({ error: true });
+      this.setState({
+        error: true,
+        value: inputVal
+      });
     }
   },
   handleClick: function(e) {
@@ -141,11 +161,17 @@ var App = React.createClass({
     }
     this.setState({ lineView: !this.state.lineView });
   },
-  restart: function() {
+  restartGame: function() {
+    // preserve lineView
+    var newState = this.getInitialState();
+    newState.lineView = this.state.lineView;
+    this.setState(newState);
+    this.intervals.map(clearInterval);
   },
   setupTimer: function() {
     this.setState({
-      start: new Date().getTime()
+      start: new Date().getTime(),
+      started: true
     }, function() {
       this.setInterval(function() {
         this.setState({
@@ -158,6 +184,8 @@ var App = React.createClass({
     return (
       <div className="container">
         <h1>react-typer</h1>
+        <ScoreBoard
+          onRestart={this.restartGame} />
         <a
           href="javascript:;"
           onClick={this.handleClick}
@@ -173,10 +201,11 @@ var App = React.createClass({
         <TextInput
           onInputChange={this.handleInputChange}
           setupTimer={this.setupTimer}
+          value={this.state.value}
+          started={this.state.started}
           error={this.state.error} />
         <Clock elapsed={this.state.timeElapsed} />
         <Recap
-          onRestart={this.restart}
           completed={this.state.completed} />
       </div>
     );

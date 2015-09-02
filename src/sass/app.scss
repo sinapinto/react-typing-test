@@ -74,3 +74,15 @@ button:focus {
 }
 
 @include input-placeholder(darken($darkGrey, 20%));
+
+.scoreBoard {
+  button.tryAgain {
+    border: none;
+    border-radius: 5px;
+    color: $background;
+    background-color: $cyan;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
