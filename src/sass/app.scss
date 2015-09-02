@@ -56,24 +56,24 @@ button:focus {
   font-size: 30px;
 }
 
-@mixin input-placeholder($color) {
-  ::-webkit-input-placeholder {
-    color: $color;
-  }
-  :-moz-placeholder {
-    color: $color;
-    opacity:  1;
-  }
-  ::-moz-placeholder {
-    color: $color;
-    opacity:  1;
-  }
-  :-ms-input-placeholder {
-    color: $color;
-  }
-}
+// @mixin input-placeholder($color) {
+//   ::-webkit-input-placeholder {
+//     color: $color;
+//   }
+//   :-moz-placeholder {
+//     color: $color;
+//     opacity:  1;
+//   }
+//   ::-moz-placeholder {
+//     color: $color;
+//     opacity:  1;
+//   }
+//   :-ms-input-placeholder {
+//     color: $color;
+//   }
+// }
 
-@include input-placeholder(darken($darkGrey, 20%));
+// @include input-placeholder(darken($darkGrey, 20%));
 
 .scoreBoard {
   button.tryAgain {

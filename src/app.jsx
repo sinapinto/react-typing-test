@@ -1,7 +1,6 @@
 var React = require('react');
 require('./sass/app.scss');
-
-var excerpt = "All your base are belong to us.";
+var excerpts = require('./excerpts.js');
 
 var TextDisplay = React.createClass({
   getCompletedText: function() {
@@ -78,12 +77,14 @@ var TextInput = React.createClass({
 
 var Recap = React.createClass({
   render: function() {
-    if (!this.props.completed) {
+    if (!this.props.wpm) {
       return null;
     }
     return (
       <div className="recapOverlay">
         <h2>Congrats!</h2>
+        <div>WPM: {this.props.wpm}</div>
+        <div>Errors: {this.props.errorCount}</div>
       </div>
     );
   }
@@ -114,17 +115,22 @@ var App = React.createClass({
     return {
       index: 0,
       error: false,
-      lineView: false,
+      errorCount: 0,
+      lineView: true,
       timeElapsed: 0,
-      completed: false,
       value: '',
-      started: false
+      started: false,
+      wpm: null,
+      excerpt: this._randomElement(this.props.excerpts)
     };
+  },
+  _randomElement: function(array) {
+    return this.props.excerpts[Math.floor(Math.random()*this.props.excerpts.length)];
   },
   handleInputChange: function(e) {
     var inputVal = e.target.value;
     var index = this.state.index;
-    if (this.props.excerpt.slice(index, index + inputVal.length) === inputVal) {
+    if (this.state.excerpt.slice(index, index + inputVal.length) === inputVal) {
       if (inputVal.slice(-1) === " " && !this.state.error) {
         // handle a space after a correct word
         this.setState({
@@ -132,10 +138,10 @@ var App = React.createClass({
           value: ''
         });
       }
-      else if (index + inputVal.length == excerpt.length) {
+      else if (index + inputVal.length == this.state.excerpt.length) {
         // successfully completed
+        this.calculateWPM();
         this.setState({
-          completed: true,
           value: ''
         });
         this.intervals.map(clearInterval);
@@ -149,16 +155,12 @@ var App = React.createClass({
     } else {
       this.setState({
         error: true,
-        value: inputVal
+        value: inputVal,
+        errorCount: this.state.error ? this.state.errorCount : this.state.errorCount + 1
       });
     }
   },
   handleClick: function(e) {
-    if (this.state.lineView) {
-      React.findDOMNode(this.refs.viewType).text = "line view";
-    } else {
-      React.findDOMNode(this.refs.viewType).text = "paragraph view";
-    }
     this.setState({ lineView: !this.state.lineView });
   },
   restartGame: function() {
@@ -180,23 +182,29 @@ var App = React.createClass({
       }.bind(this), 50)
     });
   },
+  calculateWPM: function() {
+    var elapsed = new Date().getTime() - this.state.start;
+    var wpm = this.state.excerpt.split(' ').length / (elapsed / 1000) * 60;
+    this.setState({
+      wpm: Math.round(wpm * 10) / 10
+    });
+  },
   render: function() {
     return (
       <div className="container">
         <h1>react-typer</h1>
-        <ScoreBoard
-          onRestart={this.restartGame} />
         <a
           href="javascript:;"
           onClick={this.handleClick}
           ref="viewType">
-          line view
+          {this.state.lineView ? 'paragraph view' : 'line view'}
         </a>
+        <ScoreBoard onRestart={this.restartGame} />
         <TextDisplay
           index={this.state.index}
           error={this.state.error}
           lineView={this.state.lineView}>
-          {this.props.excerpt}
+          {this.state.excerpt}
         </TextDisplay>
         <TextInput
           onInputChange={this.handleInputChange}
@@ -206,10 +214,11 @@ var App = React.createClass({
           error={this.state.error} />
         <Clock elapsed={this.state.timeElapsed} />
         <Recap
-          completed={this.state.completed} />
+          errorCount={this.state.errorCount}
+          wpm={this.state.wpm} />
       </div>
     );
   }
 });
 
-React.render(<App excerpt={excerpt} />, document.getElementById('app'));
+React.render(<App excerpts={excerpts} />, document.getElementById('app'));
