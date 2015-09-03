@@ -1,16 +1,18 @@
 @import 'variables';
+@import 'fonts/fonts.css';
+$font-stack: 'proxima-regular', sans-serif;
 
 body {
   font: 100% $font-stack;
   color: $foreground;
   background-color: $background;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-input:focus,
-a:focus,
-button:focus {
+input:focus {
   outline: none;
-  text-decoration: none;
 }
 
 #container {
@@ -32,19 +34,33 @@ button:focus {
 /**
  * buttons
  */
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+     -moz-border-radius: $radius;
+      -ms-border-radius: $radius;
+          border-radius: $radius;
+}
+@mixin box-shadow($shadow) {
+  -webkit-box-shadow: $shadow;
+     -moz-box-shadow: $shadow;
+      -ms-box-shadow: $shadow;
+          box-shadow: $shadow;
+}
 @mixin button($color, $darkColor) {
   border: none;
-  border-radius: 5px;
+  @include border-radius(5px);
   cursor: pointer;
-  font-weight: 600;
+  font-family: 'proxima-bold', sans-serif;
   font-size: 14px;
   float: right;
   margin-top: 10px;
   margin-left: 10px;
   color: $background;
   background-color: $darkColor;
+  @include box-shadow(0px 2px darken($darkColor, 10%));
   &:hover {
     background-color: $color;
+    @include box-shadow(0px 2px darken($color, 10%));
   }
 }
 button.reset {
@@ -94,7 +110,6 @@ button.changeView {
     border-radius: 12px;
     background: rgba(0,0,0,0.26);
   }
-
 }
 
 @mixin input-placeholder($color) {
@@ -121,7 +136,7 @@ button.changeView {
  * timer
  */
 .timer {
+  font-family: 'proxima-bold', sans-serif;
   font-size: 50px;
   color: lighten($background, 7%);
-  font-weight: 600;
 }

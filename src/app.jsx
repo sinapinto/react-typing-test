@@ -70,6 +70,7 @@ var TextInput = React.createClass({
           className={this.props.error ? 'error' : ''}
           ref="textInput"
           value={this.props.value}
+          autoFocus
           onChange={this.handleChange} />
       </div>
     );
@@ -117,7 +118,7 @@ var App = React.createClass({
       index: 0,
       error: false,
       errorCount: 0,
-      lineView: true,
+      lineView: false,
       timeElapsed: 0,
       value: '',
       started: false,

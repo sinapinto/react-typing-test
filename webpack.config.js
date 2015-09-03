@@ -30,6 +30,14 @@ var config = {
           path.resolve(__dirname, "src/sass")
         ],
         loader: 'style!css!sass'
+      },
+      {
+        test: /\.woff$/,
+        loader: 'url?limit=100000'
+      },
+      {
+        test: /\.ttf$/,
+        loader: 'url?limit=100000'
       }
     ],
 
