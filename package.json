@@ -1,5 +1,5 @@
 {
-  "name": "react-typer",
+  "name": "react-typing-test",
   "version": "0.0.0",
   "description": "",
   "main": "index.jsx",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sinapinto/react-typer"
+    "url": "https://github.com/sinapinto/react-typing-test"
   },
   "author": "",
   "license": "MIT",
