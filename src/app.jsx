@@ -25,7 +25,7 @@ var TextDisplay = React.createClass({
     }
     var wordEnd = idx + text.slice(idx).indexOf(' ');
     if (this.props.lineView) {
-      return text.slice(wordEnd).split(' ').slice(0, 10).join(' ');
+      return text.slice(wordEnd).split(' ').slice(0, 5).join(' ');
     }
     return text.slice(wordEnd);
   },
@@ -45,7 +45,7 @@ var TextDisplay = React.createClass({
 var Clock = React.createClass({
   render: function() {
     var elapsed = Math.round(this.props.elapsed  / 100);
-    var timer = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
+    var timer = elapsed / 10 + (elapsed % 10 ? 's' : '.0s' );
     return (
       <div className="timer">
         {timer}
@@ -66,6 +66,7 @@ var TextInput = React.createClass({
       <div className="textInput">
         <input
           type="text"
+          placeholder="Start typing.."
           className={this.props.error ? 'error' : ''}
           ref="textInput"
           value={this.props.value}
@@ -93,13 +94,13 @@ var Recap = React.createClass({
 var ScoreBoard = React.createClass({
   render: function() {
     return (
-      <div className="scoreBoard">
+      <span className="scoreBoard">
         <button
-          className="tryAgain"
+          className="reset"
           onClick={this.props.onRestart}>
           Reset
         </button>
-      </div>
+      </span>
     );
   },
 });
@@ -191,15 +192,15 @@ var App = React.createClass({
   },
   render: function() {
     return (
-      <div className="container">
-        <h1>react-typer</h1>
-        <a
-          href="javascript:;"
+      <div className="centered">
+        <div className="header">
+          <ScoreBoard onRestart={this.restartGame} />
+        </div>
+        <button
           onClick={this.handleClick}
-          ref="viewType">
-          {this.state.lineView ? 'paragraph view' : 'line view'}
-        </a>
-        <ScoreBoard onRestart={this.restartGame} />
+          className="changeView" >
+          {this.state.lineView ? 'Paragraph' : 'Line'}
+        </button>
         <TextDisplay
           index={this.state.index}
           error={this.state.error}
@@ -221,4 +222,4 @@ var App = React.createClass({
   }
 });
 
-React.render(<App excerpts={excerpts} />, document.getElementById('app'));
+React.render(<App excerpts={excerpts} />, document.getElementById('container'));

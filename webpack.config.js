@@ -2,8 +2,8 @@ var path = require('path');
 var node_modules = path.resolve(__dirname, 'node_modules');
 var minifiedReact = path.resolve(node_modules, 'react/dist/react.min.js');
 
-module.exports = {
-  entry: ['webpack/hot/dev-server', './src/app.jsx'],
+var config = {
+  entry: ['./src/app.jsx'],
 
   // Use minified react for quicker rebundling.
   // No propTypes type validation. Also lose error messages
@@ -38,3 +38,9 @@ module.exports = {
   },
 
 };
+
+if (process.env.NODE_ENV === "development") {
+  config.entry.push('webpack/hot/dev-server');
+}
+
+module.exports = config;
