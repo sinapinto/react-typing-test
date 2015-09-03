@@ -3,13 +3,13 @@ require('./sass/app.scss');
 var excerpts = require('./excerpts.js');
 
 var TextDisplay = React.createClass({
-  getCompletedText: function() {
+  _getCompletedText: function() {
     if (this.props.lineView) {
       return '';
     }
     return this.props.children.slice(0, this.props.index);
   },
-  getCurrentText: function() {
+  _getCurrentText: function() {
     var idx = this.props.index;
     var text = this.props.children;
     if (text.slice(idx).indexOf(' ') === -1) {
@@ -17,7 +17,7 @@ var TextDisplay = React.createClass({
     }
     return text.slice(idx, idx + text.slice(idx).indexOf(' '));
   },
-  getRemainingText: function() {
+  _getRemainingText: function() {
     var idx = this.props.index;
     var text = this.props.children;
     if (text.slice(idx).indexOf(' ') === -1) {
@@ -32,11 +32,11 @@ var TextDisplay = React.createClass({
   render: function() {
     return (
       <div className={this.props.lineView ? "textDisplay lg" : "textDisplay"}>
-        {this.getCompletedText()}
+        {this._getCompletedText()}
         <span className={this.props.error ? "error" : "success"}>
-          {this.getCurrentText()}
+          {this._getCurrentText()}
         </span>
-        {this.getRemainingText()}
+        {this._getRemainingText()}
       </div>
     );
   }
@@ -57,7 +57,7 @@ var Clock = React.createClass({
 var TextInput = React.createClass({
   handleChange: function(e) {
     if (!this.props.started) {
-      this.props.setupTimer();
+      this.props.setupIntervals();
     }
     this.props.onInputChange(e);
   },
@@ -78,8 +78,11 @@ var TextInput = React.createClass({
 });
 
 var Recap = React.createClass({
+  shouldComponentUpdate: function() {
+    return this.props.completed;
+  },
   render: function() {
-    if (!this.props.wpm) {
+    if (!this.props.completed) {
       return null;
     }
     return (
@@ -90,20 +93,6 @@ var Recap = React.createClass({
       </div>
     );
   }
-});
-
-var ScoreBoard = React.createClass({
-  render: function() {
-    return (
-      <span className="scoreBoard">
-        <button
-          className="reset"
-          onClick={this.props.onRestart}>
-          Reset
-        </button>
-      </span>
-    );
-  },
 });
 
 var App = React.createClass({
@@ -121,15 +110,19 @@ var App = React.createClass({
       lineView: false,
       timeElapsed: 0,
       value: '',
-      started: false,
-      wpm: null,
-      excerpt: this._randomElement(this.props.excerpts)
+      startTime: null,
+      wpm: 0,
+      excerpt: this._randomElement(this.props.excerpts),
+      completed: false
     };
   },
   _randomElement: function(array) {
     return this.props.excerpts[Math.floor(Math.random()*this.props.excerpts.length)];
   },
-  handleInputChange: function(e) {
+  _handleInputChange: function(e) {
+    if (this.state.completed) {
+      return;
+    }
     var inputVal = e.target.value;
     var index = this.state.index;
     if (this.state.excerpt.slice(index, index + inputVal.length) === inputVal) {
@@ -142,9 +135,11 @@ var App = React.createClass({
       }
       else if (index + inputVal.length == this.state.excerpt.length) {
         // successfully completed
-        this.calculateWPM();
         this.setState({
-          value: ''
+          value: '',
+          completed: true
+        }, function() {
+          this._calculateWPM();
         });
         this.intervals.map(clearInterval);
       }
@@ -162,46 +157,61 @@ var App = React.createClass({
       });
     }
   },
-  handleClick: function(e) {
+  _handleClick: function(e) {
     this.setState({ lineView: !this.state.lineView });
   },
-  restartGame: function() {
+  _restartGame: function() {
     // preserve lineView
     var newState = this.getInitialState();
     newState.lineView = this.state.lineView;
     this.setState(newState);
     this.intervals.map(clearInterval);
   },
-  setupTimer: function() {
+  _setupIntervals: function() {
     this.setState({
-      start: new Date().getTime(),
-      started: true
+      startTime: new Date().getTime(),
     }, function() {
+      // timer
       this.setInterval(function() {
         this.setState({
-          timeElapsed: new Date().getTime() - this.state.start
+          timeElapsed: new Date().getTime() - this.state.startTime
         });
       }.bind(this), 50)
+      // WPM
+      this.setInterval(function() {
+        this._calculateWPM();
+      }.bind(this), 1000)
     });
   },
-  calculateWPM: function() {
-    var elapsed = new Date().getTime() - this.state.start;
-    var wpm = this.state.excerpt.split(' ').length / (elapsed / 1000) * 60;
+  _calculateWPM: function() {
+    var elapsed = new Date().getTime() - this.state.startTime;
+    var wpm;
+    if (this.state.completed) {
+      wpm = this.state.excerpt.split(' ').length / (elapsed / 1000) * 60;
+    } else {
+      var words = this.state.excerpt.slice(0, this.state.index).split(' ').length;
+      wpm = words / (elapsed / 1000) * 60;
+    }
     this.setState({
-      wpm: Math.round(wpm * 10) / 10
+      wpm: this.state.completed ? Math.round(wpm * 10) / 10 : Math.round(wpm)
     });
   },
   render: function() {
     return (
       <div className="centered">
         <div className="header">
-          <ScoreBoard onRestart={this.restartGame} />
+          <button
+            className="reset"
+            onClick={this._restartGame} >
+            Reset
+          </button>
+          <button
+            onClick={this._handleClick}
+            className="changeView" >
+            {this.state.lineView ? 'Paragraph' : 'Line'}
+          </button>
+          <button className="wpm">{this.state.wpm + ' wpm'}</button>
         </div>
-        <button
-          onClick={this.handleClick}
-          className="changeView" >
-          {this.state.lineView ? 'Paragraph' : 'Line'}
-        </button>
         <TextDisplay
           index={this.state.index}
           error={this.state.error}
@@ -209,15 +219,16 @@ var App = React.createClass({
           {this.state.excerpt}
         </TextDisplay>
         <TextInput
-          onInputChange={this.handleInputChange}
-          setupTimer={this.setupTimer}
+          onInputChange={this._handleInputChange}
+          setupIntervals={this._setupIntervals}
           value={this.state.value}
-          started={this.state.started}
+          started={!!this.state.startTime}
           error={this.state.error} />
         <Clock elapsed={this.state.timeElapsed} />
         <Recap
           errorCount={this.state.errorCount}
-          wpm={this.state.wpm} />
+          wpm={this.state.wpm}
+          completed={this.state.completed} />
       </div>
     );
   }
