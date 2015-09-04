@@ -5,14 +5,6 @@ var minifiedReact = path.resolve(node_modules, 'react/dist/react.min.js');
 var config = {
   entry: ['./src/app.jsx'],
 
-  // Use minified react for quicker rebundling.
-  // No propTypes type validation. Also lose error messages
-  // resolve: {
-  //   alias: {
-  //     'react': minifiedReact
-  //   }
-  // },
-
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js'
@@ -47,8 +39,6 @@ var config = {
       }
     ],
 
-    // stop webpack from parsing the minified file
-    // noParse: [minifiedReact]
   },
 
 };
