@@ -139,7 +139,7 @@ var App = React.createClass({
       });
     }
   },
-  _handleClick: function(e) {
+  _changeView: function(e) {
     this.setState({ lineView: !this.state.lineView });
   },
   _restartGame: function() {
@@ -179,7 +179,6 @@ var App = React.createClass({
     });
   },
   render: function() {
-            // {this.state.lineView ? 'Paragraph' : 'Line'}
     return (
       <div className="centered">
         <div className="header">
@@ -190,7 +189,7 @@ var App = React.createClass({
           </i>
           <i
             className="fa fa-bars"
-            onClick={this._handleClick}>
+            onClick={this._changeView}>
           </i>
         </div>
         <TextDisplay
@@ -205,7 +204,7 @@ var App = React.createClass({
           value={this.state.value}
           started={!!this.state.startTime}
           error={this.state.error} />
-        <div className="stats">
+        <div className={this.state.completed ? "stats completed" : "stats"} >
           <Clock elapsed={this.state.timeElapsed} />
           <span className="wpm">{this.state.wpm}</span>
           <span className="errors">{this.state.errorCount}</span>

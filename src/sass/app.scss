@@ -1,9 +1,8 @@
 @import 'variables';
 @import 'fonts/fonts.css';
-$font-stack: 'proxima-regular', sans-serif;
 
 body {
-  font: 100% $font-stack;
+  font: 100% 'proxima-regular', sans-serif;
   color: $foreground;
   background-color: $background;
   -webkit-font-smoothing: antialiased;
@@ -152,6 +151,26 @@ i.fa {
 }
 .errors::before {
   content: 'errors'
+}
+.stats.completed {
+  .wpm {
+    color: $cyan;
+    &:before {
+      color: $darkCyan;
+    }
+  }
+  .errors {
+    color: $red;
+    &:before {
+      color: $darkRed;
+    }
+  }
+  .timer {
+    color: $yellow;
+    &:before {
+      color: $darkYellow;
+    }
+  }
 }
 
 
