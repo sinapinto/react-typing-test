@@ -36,7 +36,7 @@ h1 {
 /**
  * buttons
  */
-i {
+i.fa {
   cursor: pointer;
   font-size: 14px;
   float: right;
@@ -127,11 +127,10 @@ i {
   width: 80px;
   position:relative;
   font-size: 46px;
-  padding-top: 20px;
   width: 70px;
   font-weight: 600;
   border-radius: 5px;
-  margin: 0 30px;
+  padding: 20px 30px;
 }
 .wpm::before,
 .errors::before,
@@ -141,7 +140,7 @@ i {
   top: 0;
   width: 100%;
   font-size: 11px;
-  font-family: 'proxima-semibold', sans-serif;
+  font-family: 'proxima-bold', sans-serif;
   line-height: 22px;
   text-transform: uppercase;
 }
