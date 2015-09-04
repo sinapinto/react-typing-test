@@ -37,7 +37,6 @@ h1 {
  */
 i.fa {
   cursor: pointer;
-  font-size: 14px;
   float: right;
   margin-left: 10px;
   color: $darkGrey;
@@ -53,8 +52,6 @@ i.fa {
  * text diplay
  */
 .textDisplay {
-  text-align: center;
-  padding: 10px;
   font-size: 22px;
   clear: both;
 
@@ -75,9 +72,8 @@ i.fa {
  * text input
  */
 .textInput {
-  text-align: center;
-  padding: 30px;
-  margin-bottom: 100px;
+  padding: 30px 3px;
+  margin-bottom: 80px;
 
   input {
     color: $darkGrey;
@@ -121,11 +117,10 @@ i.fa {
 .errors,
 .timer {
   font-family: 'proxima-bold', sans-serif;
-  font-size: 46px;
   color: lighten($background, 7%);
   width: 80px;
   position:relative;
-  font-size: 46px;
+  font-size: 60px;
   width: 70px;
   font-weight: 600;
   border-radius: 5px;
@@ -138,7 +133,7 @@ i.fa {
   left: 0;
   top: 0;
   width: 100%;
-  font-size: 11px;
+  font-size: 14px;
   font-family: 'proxima-bold', sans-serif;
   line-height: 22px;
   text-transform: uppercase;

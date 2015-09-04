@@ -184,11 +184,11 @@ var App = React.createClass({
         <div className="header">
           <h1>typing speed test</h1>
           <i
-            className="fa fa-refresh"
+            className="fa fa-lg fa-refresh"
             onClick={this._restartGame}>
           </i>
           <i
-            className="fa fa-bars"
+            className="fa fa-lg fa-bars"
             onClick={this._changeView}>
           </i>
         </div>
