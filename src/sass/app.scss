@@ -25,53 +25,27 @@ button:focus {
   margin-bottom: 100px;
 }
 
-// h1 {
-//   font-weight: 700;
-//   font-size: 36px;
-//   color: $darkGrey;
-//   display: inline;
-// }
+h1 {
+  font-size: 24px;
+  color: lighten($background, 15%);
+  display: inline;
+  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.4);
+}
 
 /**
  * buttons
  */
-@mixin border-radius($radius) {
-  -webkit-border-radius: $radius;
-     -moz-border-radius: $radius;
-      -ms-border-radius: $radius;
-          border-radius: $radius;
-}
-@mixin box-shadow($shadow) {
-  -webkit-box-shadow: $shadow;
-     -moz-box-shadow: $shadow;
-      -ms-box-shadow: $shadow;
-          box-shadow: $shadow;
-}
-@mixin button($color, $darkColor) {
-  border: none;
-  @include border-radius(5px);
+i {
   cursor: pointer;
-  font-family: 'proxima-bold', sans-serif;
   font-size: 14px;
   float: right;
-  margin-top: 10px;
   margin-left: 10px;
-  color: $background;
-  background-color: $darkColor;
-  @include box-shadow(0px 2px darken($darkColor, 10%));
+  color: $darkGrey;
+  padding: 8px;
+
   &:hover {
-    background-color: $color;
-    @include box-shadow(0px 2px darken($color, 10%));
+    color: $foreground;
   }
-}
-button.reset {
-  @include button($cyan, $darkCyan);
-}
-button.changeView {
-  @include button($magenta, $darkMagenta);
-}
-button.wpm {
-  @include button($blue, $darkBlue);
 }
 
 
@@ -103,6 +77,7 @@ button.wpm {
 .textInput {
   text-align: center;
   padding: 30px;
+  margin-bottom: 100px;
 
   input {
     color: $darkGrey;
@@ -143,4 +118,31 @@ button.wpm {
   font-family: 'proxima-bold', sans-serif;
   font-size: 50px;
   color: lighten($background, 7%);
+  margin-left: 200px;
 }
+
+.wpm {
+  float: right;
+  margin-left: 10px;
+  margin-right: 200px;
+  width: 80px;
+  color: $darkGrey;
+  position:relative;
+  font-size: 46px;
+  text-align: center;
+  padding-top: 20px;
+  width: 70px;
+  font-weight: 600;
+  border-radius: 5px;
+}
+.wpm::before {
+  content: 'WPM';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  font-size: 11px;
+  font-family: 'proxima-semibold', sans-serif;
+  line-height: 22px;
+}
+

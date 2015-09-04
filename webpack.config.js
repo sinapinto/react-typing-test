@@ -26,17 +26,23 @@ var config = {
       },
       {
         test: /\.scss$/,
-        include: [
-          path.resolve(__dirname, "src/sass")
-        ],
         loader: 'style!css!sass'
       },
       {
-        test: /\.woff$/,
+        test: /\.css$/,
+        loader: 'style!css'
+      },
+      {
+        // proxima-nova
+        test: /\.(woff|ttf)$/,
         loader: 'url?limit=100000'
       },
       {
-        test: /\.ttf$/,
+        test: /\.eot$/,
+        loader: "file-loader"
+      },
+      {
+        test: /\.(woff|woff2|ttf|otf|eot|svg)(\?.+)$/,
         loader: 'url?limit=100000'
       }
     ],

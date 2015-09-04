@@ -1,5 +1,6 @@
 var React = require('react');
 require('./sass/app.scss');
+require('font-awesome/css/font-awesome.css');
 var excerpts = require('./excerpts.js');
 
 var TextDisplay = React.createClass({
@@ -47,9 +48,9 @@ var Clock = React.createClass({
     var elapsed = Math.round(this.props.elapsed  / 100);
     var timer = elapsed / 10 + (elapsed % 10 ? 's' : '.0s' );
     return (
-      <div className="timer">
+      <span className="timer">
         {timer}
-      </div>
+      </span>
     );
   },
 });
@@ -70,7 +71,6 @@ var TextInput = React.createClass({
           className={this.props.error ? 'error' : ''}
           ref="textInput"
           value={this.props.value}
-          autoFocus
           onChange={this.handleChange} />
       </div>
     );
@@ -197,20 +197,19 @@ var App = React.createClass({
     });
   },
   render: function() {
+            // {this.state.lineView ? 'Paragraph' : 'Line'}
     return (
       <div className="centered">
         <div className="header">
-          <button
-            className="reset"
-            onClick={this._restartGame} >
-            Reset
-          </button>
-          <button
-            onClick={this._handleClick}
-            className="changeView" >
-            {this.state.lineView ? 'Paragraph' : 'Line'}
-          </button>
-          <button className="wpm">{this.state.wpm + ' wpm'}</button>
+          <h1>typing speed test</h1>
+          <i
+            className="fa fa-refresh"
+            onClick={this._restartGame}>
+          </i>
+          <i
+            className="fa fa-bars"
+            onClick={this._handleClick}>
+          </i>
         </div>
         <TextDisplay
           index={this.state.index}
@@ -225,6 +224,7 @@ var App = React.createClass({
           started={!!this.state.startTime}
           error={this.state.error} />
         <Clock elapsed={this.state.timeElapsed} />
+        <div className="wpm">{this.state.wpm}</div>
         <Recap
           errorCount={this.state.errorCount}
           wpm={this.state.wpm}

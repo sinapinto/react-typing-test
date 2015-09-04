@@ -1,4 +1,4 @@
 node_modules/
 .sass-cache/
-build/bundle.js
-build/*.ttf
+build/
+!build/index.html
