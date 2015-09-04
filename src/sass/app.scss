@@ -12,7 +12,8 @@ body {
 }
 
 input:focus,
-button:focus {
+button:focus,
+a:focus {
   outline: none;
 }
 
@@ -112,31 +113,29 @@ i {
 
 
 /**
- * timer
+ * stats
  */
+.stats {
+  text-align: center;
+}
+.wpm,
+.errors,
 .timer {
   font-family: 'proxima-bold', sans-serif;
-  font-size: 50px;
+  font-size: 46px;
   color: lighten($background, 7%);
-  margin-left: 200px;
-}
-
-.wpm {
-  float: right;
-  margin-left: 10px;
-  margin-right: 200px;
   width: 80px;
-  color: $darkGrey;
   position:relative;
   font-size: 46px;
-  text-align: center;
   padding-top: 20px;
   width: 70px;
   font-weight: 600;
   border-radius: 5px;
+  margin: 0 30px;
 }
-.wpm::before {
-  content: 'WPM';
+.wpm::before,
+.errors::before,
+.timer:before {
   position: absolute;
   left: 0;
   top: 0;
@@ -144,5 +143,34 @@ i {
   font-size: 11px;
   font-family: 'proxima-semibold', sans-serif;
   line-height: 22px;
+  text-transform: uppercase;
+}
+.wpm::before {
+  content: 'wpm'
+}
+.timer::before {
+  content: 'time'
+}
+.errors::before {
+  content: 'errors'
 }
 
+
+/**
+ * footer
+ */
+.footer {
+  text-align: center;
+  color: lighten($background, 15%);
+  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.3);
+  font-size: 12px;
+
+  a {
+    color: $darkBlue;
+    text-decoration: none;
+
+    &:hover {
+      color: $blue;
+    }
+  }
+}

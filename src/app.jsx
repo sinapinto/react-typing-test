@@ -46,7 +46,7 @@ var TextDisplay = React.createClass({
 var Clock = React.createClass({
   render: function() {
     var elapsed = Math.round(this.props.elapsed  / 100);
-    var timer = elapsed / 10 + (elapsed % 10 ? 's' : '.0s' );
+    var timer = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
     return (
       <span className="timer">
         {timer}
@@ -72,24 +72,6 @@ var TextInput = React.createClass({
           ref="textInput"
           value={this.props.value}
           onChange={this.handleChange} />
-      </div>
-    );
-  }
-});
-
-var Recap = React.createClass({
-  shouldComponentUpdate: function() {
-    return this.props.completed;
-  },
-  render: function() {
-    if (!this.props.completed) {
-      return null;
-    }
-    return (
-      <div className="recapOverlay">
-        <h2>Congrats!</h2>
-        <div>WPM: {this.props.wpm}</div>
-        <div>Errors: {this.props.errorCount}</div>
       </div>
     );
   }
@@ -223,12 +205,11 @@ var App = React.createClass({
           value={this.state.value}
           started={!!this.state.startTime}
           error={this.state.error} />
-        <Clock elapsed={this.state.timeElapsed} />
-        <div className="wpm">{this.state.wpm}</div>
-        <Recap
-          errorCount={this.state.errorCount}
-          wpm={this.state.wpm}
-          completed={this.state.completed} />
+        <div className="stats">
+          <Clock elapsed={this.state.timeElapsed} />
+          <span className="wpm">{this.state.wpm}</span>
+          <span className="errors">{this.state.errorCount}</span>
+        </div>
       </div>
     );
   }
