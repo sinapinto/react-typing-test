@@ -180,7 +180,7 @@ var App = React.createClass({
   },
   render: function() {
     return (
-      <div className="centered">
+      <div>
         <div className="header">
           <h1>typing speed test</h1>
           <i
@@ -209,9 +209,21 @@ var App = React.createClass({
           <span className="wpm">{this.state.wpm}</span>
           <span className="errors">{this.state.errorCount}</span>
         </div>
+        <Footer />
       </div>
     );
   }
+});
+
+var Footer = React.createClass({
+  render: function() {
+    return (
+      <div className="footer">
+        Source code available on <a target="_blank" href="https://github.com/sinapinto/react-typing-test">Github</a>.
+        Colorscheme used is <a target="_blank" href="https://github.com/morhetz/gruvbox">Gruvbox</a>.
+      </div>
+    );
+  },
 });
 
 React.render(<App excerpts={excerpts} />, document.getElementById('container'));

@@ -116,12 +116,12 @@ i.fa {
 .wpm,
 .errors,
 .timer {
+  display: inline-block;
   font-family: 'proxima-bold', sans-serif;
   color: lighten($background, 7%);
-  width: 80px;
   position:relative;
   font-size: 60px;
-  width: 70px;
+  width: 100px;
   font-weight: 600;
   border-radius: 5px;
   padding: 20px 30px;
